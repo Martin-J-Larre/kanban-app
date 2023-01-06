@@ -7,12 +7,15 @@
 const app = require('../app');
 const debug = require('debug')('server:server');
 const http = require('http');
+require('dotenv').config();
+const mongoose = require('mongoose');
+
 
 /**
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '6000');
 app.set('port', port);
 
 /**
@@ -24,10 +27,18 @@ const server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
+mongoose.set('strictQuery', false);
+mongoose.connect(process.env.MONGO_DB_URI).then(()=>{
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
+  console.log("***** DATABASE CONECTED *****");
+}).catch(err => {
+  ("***** DATABASE NOT CONECTED ***** ", err);
+  process.exit(1);
+})
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+
 
 /**
  * Normalize a port into a number, string, or false.
