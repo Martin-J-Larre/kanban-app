@@ -30,9 +30,9 @@ export const Login = () => {
           margin='normal'
           required
           fullWidth
-          id='username'
-          label='Username'
-          name='username'
+          id='password'
+          label='Password'
+          name='password'
           type='password'
           disabled={loader}
         />
@@ -48,11 +48,12 @@ export const Login = () => {
         </LoadingButton>
       </Box>
       <Button
+        variant='outlined'
         component={Link}
         to='/signup'
         sx={{ textTransform: 'none' }}
       >
-        Signup
+        Sign up
       </Button>
     </>
   )
