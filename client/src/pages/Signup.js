@@ -7,7 +7,7 @@ import authApi from '../services/authApi';
 export const Signup = () => {
   const navigate = useNavigate();
 
-  const [loader, setLoader] = useState(false);
+  // const [loader, setLoader] = useState(false);
   const [userNameErrorText, setUserNameErrorText] = useState('');
   const [passwordErrorText, setPasswordErrorText] = useState('');
   const [confirmPasswordErrorText, setconfirmPasswordErrorText] = useState('');
@@ -45,17 +45,17 @@ export const Signup = () => {
 
     if (err) return
 
-    setLoader(true);
+    // setLoader(true);
 
     try {
       const res = await authApi.signup({
         username, password, confirmPassword
       });
-      setLoader(false);
+      // setLoader(false);
       localStorage.setItem('token', res.token);
       navigate('/');
     } catch (err) {
-      const errors = err.data.errors;
+      const errors = err.data.errors
       errors.forEach(e => {
         if (e.param === 'username') {
           setUserNameErrorText(e.msg)
@@ -67,7 +67,7 @@ export const Signup = () => {
           setconfirmPasswordErrorText(e.msg)
         }
       })
-      setLoader(false)
+      // setLoader(false)
     }
   }
 
@@ -86,7 +86,7 @@ export const Signup = () => {
           id='username'
           label='Username'
           name='username'
-          disabled={loader}
+          // disabled={loader}
           error={userNameErrorText !== ''}
           helperText={userNameErrorText}
         />
@@ -98,7 +98,7 @@ export const Signup = () => {
           label='Password'
           name='password'
           type='password'
-          disabled={loader}
+          // disabled={loader}
           error={passwordErrorText !== ''}
           helperText={passwordErrorText}
         />
@@ -110,7 +110,7 @@ export const Signup = () => {
           label='Confirm Password'
           name='confirmPassword'
           type='password'
-          disabled={loader}
+          // disabled={loader}
           error={confirmPasswordErrorText !== ''}
           helperText={confirmPasswordErrorText}
         />
@@ -120,7 +120,7 @@ export const Signup = () => {
           fullWidth
           color='success'
           type='submit'
-          loader={loader}
+          // loader={loader}
           >
           Sign up
         </LoadingButton>

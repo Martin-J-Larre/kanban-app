@@ -9,12 +9,13 @@ router.post('/signup',
   body('username').isLength({ min: 8 }).withMessage('username must to be minimun 8 characters'),
   body('password').isLength({ min: 8 }).withMessage('password must to be minimun 8 characters'),
   body('confirmPassword').isLength({ min: 8 }).withMessage('password must to be minimun 8 characters'),
-  body('username').custom(async value => {
-      const user = await UserModel.findOne({ username: value });
-    if (user) {
-      return Promise.reject('Username already used');
-    }
-    }),
+  body('username').custom(value => {
+    return UserModel.findOne({ username: value }).then(user => {
+      if (user) {
+        return Promise.reject('username already used')
+      }
+    })
+  }),
   validate, register  
 );
 

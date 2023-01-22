@@ -2,7 +2,7 @@ const UserModel = require('../models/UnserModel');
 const CryptoJS = require('crypto-js');
 const jwt = require('jsonwebtoken');
 
-const register = async (req, res) => { 
+exports.register = async (req, res) => { 
   const { password } = req.body;
   try {
     req.body.password = CryptoJS.AES.encrypt(
@@ -21,7 +21,7 @@ const register = async (req, res) => {
   }
 }
 
-const login = async (req, res) => { 
+exports.login = async (req, res) => { 
   const { username, password } = req.body;
   try {
     const user = await UserModel.findOne({ username }).select('password username');
@@ -64,9 +64,4 @@ const login = async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
-}
-
-module.exports = {
-  register,
-  login
 }

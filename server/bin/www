@@ -34,7 +34,7 @@ mongoose.connect(process.env.MONGO_DB_URI).then(()=>{
   server.on('listening', onListening);
   console.log("***** DATABASE CONNECTED *****");
 }).catch(err => {
-  ("***** DATABASE NOT CONNECTED ***** ", err);
+  console.log("***** DATABASE NOT CONNECTED ***** ", err);
   process.exit(1);
 })
 
