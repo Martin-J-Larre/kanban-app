@@ -2,16 +2,16 @@ const jwt = require('jsonwebtoken');
 const UserModel = require('../models/UnserModel');
 
 const tokenDecode = (req) => { 
-	const bearrerHeader = req.header['authorization'];
+	const bearrerHeader = req.headers['authorization'];
 	if (bearrerHeader) {
-		const bearer = bearrerHeader(' ')[1];
+		const bearer = bearrerHeader.split(' ')[1];
 		try {
 			const tokenDecoded = jwt.verify(
 				bearer,
 				process.env.TOKEN_SECRET_KEY
 			)
 			return tokenDecoded;
-		} catch (err) {
+		} catch {
 			return false;
 		}
 	} else {
@@ -19,7 +19,7 @@ const tokenDecode = (req) => {
 	}
 }
 
-const verifyToken = async (req, res, next) => { 
+exports.verifyToken = async (req, res, next) => { 
 	const tokenDecoded = tokenDecode(req);
 	if (tokenDecoded) {
 		const user = await UserModel.findById(tokenDecoded.id);
@@ -29,8 +29,4 @@ const verifyToken = async (req, res, next) => {
 	} else {
 		res.status(400).json('Unathorized')
 	}
-}
-
-module.exports = {
-	verifyToken
 }

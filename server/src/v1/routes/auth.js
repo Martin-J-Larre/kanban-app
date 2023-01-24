@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const { register, login } = require('../controllers/userController');
+const userController = require('../controllers/userController');
 const { body } = require('express-validator');
-const { validate } = require('../utils/validation');
-const { verifyToken } = require('../utils/tokenHandler');
+const validation = require('../utils/validation');
+const tokenHandler = require('../utils/tokenHandler');
 const UserModel = require('../models/UnserModel');
 
 router.post('/signup',
@@ -16,16 +16,18 @@ router.post('/signup',
       }
     })
   }),
-  validate, register  
+  validation.validate, 
+  userController.register
 );
 
 router.post('/login',
   body('username').isLength({ min: 8 }).withMessage('username must to be minimun 8 characters'),
   body('password').isLength({ min: 8 }).withMessage('password must to be minimun 8 characters'),
-  validate, login
+  validation.validate,
+  userController.login
 );
 
-router.post('/verify-token', verifyToken, (req, res) => {
+router.post('/verify-token', tokenHandler.verifyToken, (req, res) => {
   res.status(200).json({ user: req.user })
   }
 )

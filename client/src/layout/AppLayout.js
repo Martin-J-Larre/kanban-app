@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import authUtils from '../utils/authUtils';
 import { Loader } from '../components/Loader';
 import { Box } from '@mui/material';
-import second, { Sidebar } from '../components/Sidebar'
+import { Sidebar } from '../components/Sidebar'
 
 
 
