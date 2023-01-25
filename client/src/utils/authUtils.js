@@ -10,7 +10,7 @@ const authUtils = {
       const res = await authApi.verifyToken();
       return res.user
     } catch {
-      return false;
+      return false
     }
   }
 }

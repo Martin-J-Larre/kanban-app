@@ -24,7 +24,7 @@ export const AppLayout = () => {
   }, [navigate])
   
   return (
-    loader ? <Loader fullHeight /> : 
+    loader ? ( <Loader fullHeight />) : ( 
       <Box sx={{
         display:'flex'
       }}>
@@ -37,7 +37,6 @@ export const AppLayout = () => {
           <Outlet />
         </Box>
       </Box>
-      
-    
+    )
   )
 }

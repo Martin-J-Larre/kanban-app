@@ -42,7 +42,7 @@ export const Login = () => {
           fullWidth
           color='success'
           type='submit'
-          loader={loader}
+          loading={loader}
           >
           Login
         </LoadingButton>

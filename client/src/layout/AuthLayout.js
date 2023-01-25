@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import authUtils from '../utils/authUtils';
 import { Loader } from '../components/Loader';
 import { Container, Box } from '@mui/material';
-import assets from '../assets'
+import assets from '../assets';
 
 export const AuthLayout = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export const AuthLayout = () => {
   }, [navigate])
   
   return (
-    loader ? <Loader fullHeight /> : 
+    loader ? ( <Loader fullHeight /> ) : (
       <Container component='main' maxWidth='xs'>
         <Box sx={{
           marginTop: 8,
@@ -30,9 +30,10 @@ export const AuthLayout = () => {
           alignItems: 'center',
           flexDirection: 'column'
         }}>
-          <img src={assets.img.logoDark} style={{width: '200px'}} alt='logo'/>
+          <img src={assets.img.logoDark} style={{width: '200px'}} alt='logo'/> 
           <Outlet />
         </Box>
-      </Container>
+      </Container> 
+    )
   )
 }

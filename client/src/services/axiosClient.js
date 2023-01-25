@@ -1,7 +1,7 @@
 import axios from 'axios';
 import queryString from 'query-string';
 
-const UrlServer = 'http://localhost:5000/api/v1/';
+const UrlServer = 'http://127.0.0.1:5000/api/v1/';
 const getToken = () => localStorage.getItem('token');
 
 const axiosClient = axios.create({
@@ -19,12 +19,9 @@ axiosClient.interceptors.request.use(async config => {
   }
 });
 
-axiosClient.interceptors.response.use(response =>{
-  if (response && response.data) {
-    return response.data
-  } else {
+axiosClient.interceptors.response.use(response => {
+  if (response && response.data) return response.data
     return response
-  }
 }, err => {
   if (!err.response) {
     return alert(err)
