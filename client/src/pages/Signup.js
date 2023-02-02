@@ -10,14 +10,14 @@ export const Signup = () => {
   const [loader, setLoader] = useState(false);
   const [userNameErrorText, setUserNameErrorText] = useState('');
   const [passwordErrorText, setPasswordErrorText] = useState('');
-  const [confirmPasswordErrorText, setconfirmPasswordErrorText] = useState('');
+  const [confirmPasswordErrorText, setConfirmPasswordErrorText] = useState('');
  
 
   const handleSubmit = async (e) => { 
     e.preventDefault();
     setUserNameErrorText('');
     setPasswordErrorText('');
-    setconfirmPasswordErrorText(''); 
+    setConfirmPasswordErrorText(''); 
 
     const data = new FormData(e.target);
     const username = data.get('username').trim();
@@ -36,11 +36,11 @@ export const Signup = () => {
     }
     if (confirmPassword === '') {
       err = true;
-      setconfirmPasswordErrorText('You should confirm the Password');
+      setConfirmPasswordErrorText('You should confirm the Password');
     }
     if (password !== confirmPassword) {
       err = true;
-      setconfirmPasswordErrorText('Confirm password not match');
+      setConfirmPasswordErrorText('Confirm password not match');
     }
 
     if (err) return
@@ -64,7 +64,7 @@ export const Signup = () => {
           setPasswordErrorText(e.msg)
         }
         if (e.param === 'confirmPassword') {
-          setconfirmPasswordErrorText(e.msg)
+          setConfirmPasswordErrorText(e.msg)
         }
       })
       setLoader(false)
@@ -120,7 +120,7 @@ export const Signup = () => {
           fullWidth
           color='success'
           type='submit'
-          loader={loader}
+          loading={loader}
           >
           Sign up
         </LoadingButton>
