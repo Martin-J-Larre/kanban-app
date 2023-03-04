@@ -14,8 +14,6 @@ exports.register = async (req, res) => {
       expiresIn: "24h",
     });
     res.status(201).json({
-      status: "success",
-      message: "User created successfully",
       user,
       token,
     });
@@ -64,8 +62,6 @@ exports.login = async (req, res) => {
     });
 
     res.status(200).json({
-      status: "success",
-      message: "User logged successfully",
       user,
       token,
     });

@@ -15,11 +15,11 @@ export const Home = () => {
     setLoader(true);
     try {
       const res = await boardApi.createBoard();
-      console.log("🚀 ~ file: Home.js:18 ~ createBoard ~ res:", res);
+      console.log("**********CREATEBOARD", res);
 
       dispatch(setBoards([res]));
 
-      navigate(`/board/${res.board._id}`);
+      navigate(`/board/${res._id}`);
     } catch (err) {
       console.log("file: Home.js:15 ~ createBoard ~ err:", err);
     } finally {

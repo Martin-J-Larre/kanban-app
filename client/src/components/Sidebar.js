@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Drawer,
   List,
@@ -8,12 +8,14 @@ import {
   Box,
   Typography,
   IconButton,
+  ListItemButton,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import assets from "../assets/index";
 import boardApi from "../services/boardApi";
 import { setBoards } from "../redux/boardRedux";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 export const Sidebar = () => {
   const user = useSelector((state) => state.user.value);
@@ -21,6 +23,7 @@ export const Sidebar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { boardId } = useParams();
+  const [activeIndex, setActiveIndex] = useState(0);
   const widthSidebar = 250;
 
   useEffect(() => {
@@ -29,22 +32,35 @@ export const Sidebar = () => {
         const res = await boardApi.getAllBoard();
 
         dispatch(setBoards(res));
-        if (res.boards.length > 0 && boardId === undefined) {
-          navigate(`/board/${res.boards[0]._id}`);
+
+        console.log("🚀 ~ file: Sidebar.js:38 ~ getBoards ~ boardId:", boardId);
+        console.log("boards", boards);
+        console.log("boards[0].id", boards[0].id);
+        if (boards.length > 0 && boardId === undefined) {
+          navigate(`/board/${boards[0].id}`);
         }
       } catch (err) {
-        console.log("Sidebar--> getBoard()", err);
+        console.log(err);
       }
     };
     getBoards();
   }, []);
 
-  useEffect(() => {}, [boards]);
+  // useEffect(() => {
+  //   updateActive(boards);
+  // }, [boards]);
+
+  // const updateActive = (listBoards) => {
+  //   const activeItem = listBoards.findIndex((e) => e.id === boardId);
+  //   setActiveIndex(activeItem);
+  // };
 
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
+
+  const onDragEnd = () => {};
 
   return (
     <Drawer
@@ -56,9 +72,6 @@ export const Sidebar = () => {
         height: "100vh",
         "& > div": { borderRight: "none" },
       }}
-
-      // anchor={anchor}
-      // onClose={toggleDrawer(anchor, false)}
     >
       <List
         disablePadding
@@ -118,6 +131,49 @@ export const Sidebar = () => {
             </IconButton>
           </Box>
         </ListItem>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable
+            key={"list-board-droppable"}
+            droppableId={"list-board-droppable"}
+          >
+            {(provided) => {
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {boards.map((item, index) => (
+                  <Draggable key={item.id} draggableId={item.id} index={index}>
+                    {(provided, snapshot) => {
+                      <ListItemButton
+                        ref={provided.innerRef}
+                        {...provided.dragHandleProps}
+                        {...provided.draggableProps}
+                        selected={index === activeIndex}
+                        component={Link}
+                        to={`/board/${item.id}`}
+                        sx={{
+                          pl: "20px",
+                          cursor: snapshot.isDragging
+                            ? "grab"
+                            : "pointer!important",
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          fontWeight="700"
+                          sx={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {item.icon} {item.title}
+                        </Typography>
+                      </ListItemButton>;
+                    }}
+                  </Draggable>
+                ))}
+              </div>;
+            }}
+          </Droppable>
+        </DragDropContext>
       </List>
     </Drawer>
   );

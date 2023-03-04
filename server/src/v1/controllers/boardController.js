@@ -9,11 +9,7 @@ exports.createBoard = async (req, res) => {
       user: req.user._id,
       position: boardCounter > 0 ? boardCounter : 0,
     });
-    res.status(201).json({
-      status: "success",
-      message: "Board created successfully",
-      board,
-    });
+    res.status(201).json(board);
   } catch (err) {
     res.status(500).json({
       status: "error",
@@ -28,11 +24,7 @@ exports.getAllBoards = async (req, res) => {
     const boards = await BoardModel.find({ user: req.user._id }).sort(
       "-position"
     );
-    res.status(201).json({
-      status: "success",
-      message: "Boards found successfully",
-      boards,
-    });
+    res.status(201).json(boards);
   } catch (err) {
     res.status(500).json({
       status: "error",
