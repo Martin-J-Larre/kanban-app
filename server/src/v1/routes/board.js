@@ -6,5 +6,6 @@ const boardController = require("../controllers/boardController");
 
 router.post("/", tokenHandler.verifyToken, boardController.createBoard);
 router.get("/", tokenHandler.verifyToken, boardController.getAllBoards);
+router.put("/", tokenHandler.verifyToken, boardController.updatePosition);
 
 module.exports = router;

@@ -52,7 +52,32 @@ export const Sidebar = () => {
     navigate("/login");
   };
 
-  const onDragEnd = () => {};
+  const onDragEnd = async ({ source, destination }) => {
+    const newList = [...boards];
+    const [removed] = newList.splice(source.index, 1);
+    newList.splice(destination.index, 0, removed);
+
+    const activeItem = newList.findIndex((e) => e._id === boardId);
+    setActiveIndex(activeItem);
+    dispatch(setBoards(newList));
+
+    try {
+      await boardApi.updatePosition({ boards: newList });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const addBoard = async () => {
+    try {
+      const res = await boardApi.createBoard();
+      const newList = [res, ...boards];
+      dispatch(setBoards(newList));
+      navigate(`/board/${res._id}`);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Drawer
@@ -118,7 +143,7 @@ export const Sidebar = () => {
             <Typography variant="body2" fontWeight="700">
               Private
             </Typography>
-            <IconButton>
+            <IconButton onClick={addBoard}>
               <AddBoxOutlinedIcon fontSize="small" />
             </IconButton>
           </Box>
