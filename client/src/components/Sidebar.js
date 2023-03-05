@@ -32,28 +32,20 @@ export const Sidebar = () => {
         const res = await boardApi.getAllBoard();
 
         dispatch(setBoards(res));
-
-        console.log("🚀 ~ file: Sidebar.js:38 ~ getBoards ~ boardId:", boardId);
-        console.log("boards", boards);
-        console.log("boards[0].id", boards[0].id);
-        if (boards.length > 0 && boardId === undefined) {
-          navigate(`/board/${boards[0].id}`);
-        }
       } catch (err) {
         console.log(err);
       }
     };
     getBoards();
-  }, []);
+  }, [dispatch]);
 
-  // useEffect(() => {
-  //   updateActive(boards);
-  // }, [boards]);
-
-  // const updateActive = (listBoards) => {
-  //   const activeItem = listBoards.findIndex((e) => e.id === boardId);
-  //   setActiveIndex(activeItem);
-  // };
+  useEffect(() => {
+    const activeItem = boards.findIndex((e) => e._id === boardId);
+    if (boards.length > 0 && boardId === undefined) {
+      navigate(`/board/${boards[0]._id}`);
+    }
+    setActiveIndex(activeItem);
+  }, [boards, boardId, navigate]);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -133,21 +125,25 @@ export const Sidebar = () => {
         </ListItem>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable
-            key={"list-board-droppable"}
+            key={"list-board-droppable-key"}
             droppableId={"list-board-droppable"}
           >
-            {(provided) => {
+            {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {boards.map((item, index) => (
-                  <Draggable key={item.id} draggableId={item.id} index={index}>
-                    {(provided, snapshot) => {
+                  <Draggable
+                    key={item._id}
+                    draggableId={item._id}
+                    index={index}
+                  >
+                    {(provided, snapshot) => (
                       <ListItemButton
                         ref={provided.innerRef}
                         {...provided.dragHandleProps}
                         {...provided.draggableProps}
                         selected={index === activeIndex}
                         component={Link}
-                        to={`/board/${item.id}`}
+                        to={`/board/${item._id}`}
                         sx={{
                           pl: "20px",
                           cursor: snapshot.isDragging
@@ -166,12 +162,13 @@ export const Sidebar = () => {
                         >
                           {item.icon} {item.title}
                         </Typography>
-                      </ListItemButton>;
-                    }}
+                      </ListItemButton>
+                    )}
                   </Draggable>
                 ))}
-              </div>;
-            }}
+                {provided.placeholder}
+              </div>
+            )}
           </Droppable>
         </DragDropContext>
       </List>
