@@ -5,6 +5,7 @@ const boardApi = {
   getAllBoard: () => axiosClient.get("boards"),
   updatePosition: (params) => axiosClient.put("boards", params),
   getOneBoard: (id) => axiosClient.get(`boards/${id}`),
+  updateBoard: (id, params) => axiosClient.put(`boards/${id}`, params),
 };
 
 export default boardApi;

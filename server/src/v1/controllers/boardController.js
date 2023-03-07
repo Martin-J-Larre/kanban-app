@@ -81,3 +81,49 @@ exports.getOneBoard = async (req, res) => {
     });
   }
 };
+
+exports.updateBoard = async (req, res) => {
+  const { boardId } = req.params;
+  const { title, description, favourite } = req.boby;
+
+  try {
+    if (title === "") req.body.title = "Untitled";
+    if (description === "") req.body.description = "Add description here ...";
+    const currentBoard = await BoardModel.findById(boardId);
+    if (!currentBoard) {
+      res.status(404).json({
+        status: "error",
+        message: "Board could not be found",
+        err,
+      });
+    }
+    if (favourite !== undefined && currentBoard.favourite !== favourite) {
+      const favourites = await BoardModel.find({
+        user: currentBoard.user,
+        favourite: true,
+        _id: { $ne: boardId },
+      });
+      if (favourite) {
+        req.body.favouritePosition =
+          favourites.length > 0 ? favourites.length : 0;
+      } else {
+        for (const key in favourites) {
+          const element = favourites[key];
+          await BoardModel.findByIdAndUpdate(element._id, {
+            $set: { favouritePosition: key },
+          });
+        }
+      }
+    }
+    const board = await BoardModel.findByIdAndUpdate(boardId, {
+      $set: req.body,
+    });
+    res.status(200).json(board);
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: "Board could not be updated",
+      err,
+    });
+  }
+};

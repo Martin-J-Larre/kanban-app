@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, IconButton, TextField } from "@mui/material";
+import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import StartOutlinedIcon from "@mui/icons-material/StartOutlined";
 import StartBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -14,9 +14,6 @@ export const Board = () => {
   const [sections, setSections] = useState([]);
   const [isFavourite, setIsFavourite] = useState(false);
   const [icon, setIcon] = useState("");
-  console.log({ sections });
-  console.log({ isFavourite });
-  console.log({ icon });
 
   useEffect(() => {
     const getBoard = async () => {
@@ -28,9 +25,6 @@ export const Board = () => {
         setSections(res.sections);
         setIsFavourite(res.favourite);
         setIcon(res.icon);
-        console.log({ sections });
-        console.log({ isFavourite });
-        console.log({ icon });
       } catch (err) {
         console.log(err);
       }
@@ -60,33 +54,53 @@ export const Board = () => {
         </IconButton>
       </Box>
       <Box sx={{ padding: "10px 50px" }}>
-        <Box>{/* Emoji picker */}</Box>
-        <TextField
-          value={title}
-          placeholder="Untitled"
-          variant="outlined"
-          fullWidth
-          sx={{
-            "& .MuiOutlinedInput-input": { padding: 0 },
-            "& .MuiOutlinedInput-notchedOutline": { border: "unset" },
-            "& .MuiOutlinedInput-root": { fontSize: "2rem", fontWeight: "700" },
-          }}
-        />
-        <TextField
-          value={description}
-          placeholder="Add a descrition"
-          variant="outlined"
-          multiline
-          fullWidth
-          sx={{
-            "& .MuiOutlinedInput-input": { padding: 0 },
-            "& .MuiOutlinedInput-notchedOutline": { border: "unset" },
-            "& .MuiOutlinedInput-root": {
-              fontSize: "0.8rem",
-            },
-          }}
-        />
+        <Box>
+          {/* Emoji picker */}
+          <TextField
+            value={title}
+            placeholder="Untitled"
+            variant="outlined"
+            fullWidth
+            sx={{
+              "& .MuiOutlinedInput-input": { padding: 0 },
+              "& .MuiOutlinedInput-notchedOutline": { border: "unset" },
+              "& .MuiOutlinedInput-root": {
+                fontSize: "2rem",
+                fontWeight: "700",
+              },
+            }}
+          />
+          <TextField
+            value={description}
+            placeholder="Add a descrition"
+            variant="outlined"
+            multiline
+            fullWidth
+            sx={{
+              "& .MuiOutlinedInput-input": { padding: 0 },
+              "& .MuiOutlinedInput-notchedOutline": { border: "unset" },
+              "& .MuiOutlinedInput-root": {
+                fontSize: "1rem",
+              },
+            }}
+          />
+        </Box>
+        <Box>{/* {Kanban board} */}</Box>
       </Box>
+      {/* <Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Button>Add section</Button>
+          <Typography variant="body2" fontWeight="700">
+            {sections.length} Sections
+          </Typography>
+        </Box>
+      </Box> */}
     </>
   );
 };
