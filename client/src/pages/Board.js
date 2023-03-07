@@ -6,6 +6,7 @@ import StartBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 // import { EmojiPicker } from "emoji-mart";
 import boardApi from "../services/boardApi";
+import { EmojiPicker } from "../components/EmojiPicker";
 
 export const Board = () => {
   const { boardId } = useParams();
@@ -55,7 +56,7 @@ export const Board = () => {
       </Box>
       <Box sx={{ padding: "10px 50px" }}>
         <Box>
-          {/* Emoji picker */}
+          <EmojiPicker icon={icon} />
           <TextField
             value={title}
             placeholder="Untitled"
