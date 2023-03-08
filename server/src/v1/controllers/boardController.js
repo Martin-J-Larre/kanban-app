@@ -84,7 +84,7 @@ exports.getOneBoard = async (req, res) => {
 
 exports.updateBoard = async (req, res) => {
   const { boardId } = req.params;
-  const { title, description, favourite } = req.boby;
+  const { title, description, favourite } = req.body;
 
   try {
     if (title === "") req.body.title = "Untitled";

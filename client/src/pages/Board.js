@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import StartOutlinedIcon from "@mui/icons-material/StartOutlined";
@@ -7,8 +8,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 // import { EmojiPicker } from "emoji-mart";
 import boardApi from "../services/boardApi";
 import { EmojiPicker } from "../components/EmojiPicker";
+import { setBoards } from "../redux/boardRedux";
 
 export const Board = () => {
+  const dispatch = useDispatch();
   const { boardId } = useParams();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -16,11 +19,12 @@ export const Board = () => {
   const [isFavourite, setIsFavourite] = useState(false);
   const [icon, setIcon] = useState("");
 
+  const boards = useSelector((state) => state.board.value);
+
   useEffect(() => {
     const getBoard = async () => {
       try {
         const res = await boardApi.getOneBoard(boardId);
-        console.log("res ==>", res);
         setTitle(res.title);
         setDescription(res.description);
         setSections(res.sections);
@@ -32,6 +36,23 @@ export const Board = () => {
     };
     getBoard();
   }, [boardId]);
+
+  const onIconChange = async (newIcon) => {
+    let data = [...boards];
+    const index = data.findIndex((e) => e._id === boardId);
+    data[index] = { ...data[index], icon: newIcon };
+    setIcon(newIcon);
+    dispatch(setBoards(data));
+    try {
+      await boardApi.updateBoard(boardId, { icon: newIcon });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const updateTitle = (second) => {
+    third;
+  };
 
   return (
     <>
@@ -56,9 +77,10 @@ export const Board = () => {
       </Box>
       <Box sx={{ padding: "10px 50px" }}>
         <Box>
-          <EmojiPicker icon={icon} />
+          <EmojiPicker icon={icon} onChange={onIconChange} />
           <TextField
             value={title}
+            onChange={updateTitle}
             placeholder="Untitled"
             variant="outlined"
             fullWidth

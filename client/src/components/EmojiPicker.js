@@ -1,19 +1,26 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
+import { Picker } from "emoji-mart";
 
-export const EmojiPicker = ({ icon }) => {
+export const EmojiPicker = (props) => {
   const [emoji, SetEmoji] = useState();
-  const [isShowPicker, SetIsShowPicker] = useState(false);
+  const [isShowPicker, setIsShowPicker] = useState(false);
 
   useEffect(() => {
-    SetEmoji(icon);
-  }, [icon]);
+    SetEmoji(props.icon);
+  }, [props.icon]);
 
-  const selectEmoji = (e) => {};
+  const selectEmoji = (e) => {
+    const sym = e.unified.split("-");
+    let codesArray = [];
+    sym.forEach((element) => codesArray.push("0x" + element));
+    const emojis = String.fromCodePoint(...codesArray);
+    setIsShowPicker(false);
+    props.onChange(emojis);
+  };
 
-  const showPicker = () => SetIsShowPicker(!isShowPicker);
+  const showPicker = () => setIsShowPicker(!isShowPicker);
 
   return (
     <Box sx={{ position: "relative", width: "max-content" }}>
