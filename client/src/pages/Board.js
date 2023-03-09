@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
-import StartOutlinedIcon from "@mui/icons-material/StartOutlined";
-import StartBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
+import StarOutlinedIcon from "@mui/icons-material/StarOutlined";
+import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
-// import { EmojiPicker } from "emoji-mart";
 import boardApi from "../services/boardApi";
 import { EmojiPicker } from "../components/EmojiPicker";
 import { setBoards } from "../redux/boardRedux";
+
+let timer;
+const timeOut = 500;
 
 export const Board = () => {
   const dispatch = useDispatch();
@@ -50,8 +52,43 @@ export const Board = () => {
     }
   };
 
-  const updateTitle = (second) => {
-    third;
+  const updateTitle = async (e) => {
+    clearTimeout(timer);
+    const newTitle = e.target.value;
+    setTitle(newTitle);
+    let data = [...boards];
+    const index = data.findIndex((e) => e._id === boardId);
+    data[index] = { ...data[index], title: newTitle };
+    dispatch(setBoards(data));
+    timer = setTimeout(async () => {
+      try {
+        await boardApi.updateBoard(boardId, { title: newTitle });
+      } catch (err) {
+        console.log(err);
+      }
+    }, timeOut);
+  };
+
+  const updateDescription = async (e) => {
+    clearTimeout(timer);
+    const newDescription = e.target.value;
+    setDescription(newDescription);
+    timer = setTimeout(async () => {
+      try {
+        await boardApi.updateBoard(boardId, { description: newDescription });
+      } catch (err) {
+        console.log(err);
+      }
+    }, timeOut);
+  };
+
+  const addFavourite = async () => {
+    try {
+      await boardApi.updateBoard(boardId, { favourite: !isFavourite });
+      setIsFavourite(!isFavourite);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -64,11 +101,11 @@ export const Board = () => {
           width: "100%",
         }}
       >
-        <IconButton variant="outlined">
+        <IconButton variant="outlined" onClick={addFavourite}>
           {isFavourite ? (
-            <StartOutlinedIcon color="warning" />
+            <StarOutlinedIcon color="warning" />
           ) : (
-            <StartBorderOutlinedIcon />
+            <StarBorderOutlinedIcon />
           )}
         </IconButton>
         <IconButton variant="outlined" color="error">
@@ -95,6 +132,7 @@ export const Board = () => {
           />
           <TextField
             value={description}
+            onChange={updateDescription}
             placeholder="Add a descrition"
             variant="outlined"
             multiline

@@ -127,3 +127,19 @@ exports.updateBoard = async (req, res) => {
     });
   }
 };
+
+exports.getFavourites = async (req, res) => {
+  try {
+    const favourites = await BoardModel.find({
+      user: req.use._id,
+      favourite: true,
+    }).sort("-favouritePosition");
+    res.status(200).json(favourites);
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: "Favourites could not be found",
+      err,
+    });
+  }
+};

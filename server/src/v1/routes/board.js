@@ -7,6 +7,11 @@ const boardController = require("../controllers/boardController");
 router.post("/", tokenHandler.verifyToken, boardController.createBoard);
 router.get("/", tokenHandler.verifyToken, boardController.getAllBoards);
 router.get(
+  "/favourites",
+  tokenHandler.verifyToken,
+  boardController.getFavourites
+);
+router.get(
   "/:boardId",
   param("boardId").custom((value) => {
     if (!validation.isObjectId(value)) {
