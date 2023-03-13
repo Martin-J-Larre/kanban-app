@@ -16,6 +16,7 @@ import assets from "../assets/index";
 import boardApi from "../services/boardApi";
 import { setBoards } from "../redux/boardRedux";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { FavouriteList } from "./FavouriteList";
 
 export const Sidebar = () => {
   const user = useSelector((state) => state.user.value);
@@ -25,12 +26,10 @@ export const Sidebar = () => {
   const { boardId } = useParams();
   const [activeIndex, setActiveIndex] = useState(0);
   const widthSidebar = 250;
-
   useEffect(() => {
     const getBoards = async () => {
       try {
         const res = await boardApi.getAllBoard();
-
         dispatch(setBoards(res));
       } catch (err) {
         console.log(err);
@@ -38,7 +37,6 @@ export const Sidebar = () => {
     };
     getBoards();
   }, [dispatch]);
-
   useEffect(() => {
     const activeItem = boards.findIndex((e) => e._id === boardId);
     if (boards.length > 0 && boardId === undefined) {
@@ -46,28 +44,23 @@ export const Sidebar = () => {
     }
     setActiveIndex(activeItem);
   }, [boards, boardId, navigate]);
-
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
-
   const onDragEnd = async ({ source, destination }) => {
     const newList = [...boards];
     const [removed] = newList.splice(source.index, 1);
     newList.splice(destination.index, 0, removed);
-
     const activeItem = newList.findIndex((e) => e._id === boardId);
     setActiveIndex(activeItem);
     dispatch(setBoards(newList));
-
     try {
       await boardApi.updatePosition({ boards: newList });
     } catch (err) {
       console.log(err);
     }
   };
-
   const addBoard = async () => {
     try {
       const res = await boardApi.createBoard();
@@ -78,7 +71,6 @@ export const Sidebar = () => {
       console.log(err);
     }
   };
-
   return (
     <Drawer
       container={window.document.body}
@@ -116,20 +108,9 @@ export const Sidebar = () => {
           </Box>
         </ListItem>
         <Box sx={{ paddingTop: "10px" }} />
-        <ListItem>
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Typography variant="body2" fontWeight="700">
-              Favourites
-            </Typography>
-          </Box>
-        </ListItem>
+
+        <FavouriteList />
+
         <Box sx={{ paddingTop: "10px" }} />
         <ListItem>
           <Box

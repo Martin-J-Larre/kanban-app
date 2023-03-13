@@ -40,7 +40,14 @@ exports.updatePositionBoard = async (req, res) => {
   try {
     for (const key in boards.reverse()) {
       const board = boards[key];
+      await BoardModel.findByIdAndUpdate(board._id, {
+        $set: { position: key },
+      });
     }
+    res.status(200).json({
+      status: "success",
+      message: "Position updated",
+    });
   } catch (err) {
     res.status(500).json({
       status: "error",
@@ -131,7 +138,7 @@ exports.updateBoard = async (req, res) => {
 exports.getFavourites = async (req, res) => {
   try {
     const favourites = await BoardModel.find({
-      user: req.use._id,
+      user: req.user._id,
       favourite: true,
     }).sort("-favouritePosition");
     res.status(200).json(favourites);
@@ -139,6 +146,29 @@ exports.getFavourites = async (req, res) => {
     res.status(500).json({
       status: "error",
       message: "Favourites could not be found",
+      err,
+    });
+  }
+};
+
+exports.updateFavouritePosition = async (req, res) => {
+  const { boards } = req.body;
+
+  try {
+    for (const key in boards.reverse()) {
+      const board = boards[key];
+      await BoardModel.findByIdAndUpdate(board._id, {
+        $set: { favouritePosition: key },
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      message: "Favourite position updated",
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: "Favourite position could not be updated",
       err,
     });
   }
