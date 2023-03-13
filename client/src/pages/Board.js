@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import StarOutlinedIcon from "@mui/icons-material/StarOutlined";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
@@ -15,6 +15,7 @@ const timeOut = 500;
 
 export const Board = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { boardId } = useParams();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -29,6 +30,7 @@ export const Board = () => {
     const getBoard = async () => {
       try {
         const res = await boardApi.getOneBoard(boardId);
+        // console.log("🚀 ~ file: Board.js:33 ~ getBoard ~ res:", res);
         setTitle(res.title);
         setDescription(res.description);
         setSections(res.sections);
@@ -48,9 +50,9 @@ export const Board = () => {
 
     if (isFavourite) {
       let dataFavourite = [...favouriteList];
-      const favouritIndex = dataFavourite.findIndex((e) => e._id === boardId);
-      dataFavourite[favouritIndex] = {
-        ...dataFavourite[favouritIndex],
+      const favouriteIndex = dataFavourite.findIndex((e) => e._id === boardId);
+      dataFavourite[favouriteIndex] = {
+        ...dataFavourite[favouriteIndex],
         icon: newIcon,
       };
       dispatch(setFavouriteList(dataFavourite));
@@ -116,6 +118,28 @@ export const Board = () => {
     }
   };
 
+  const deleteBoard = async () => {
+    try {
+      await boardApi.deleteBoard(boardId);
+      if (isFavourite) {
+        const newFavouriteList = favouriteList.filter(
+          (favourite) => favourite._id !== boardId
+        );
+        dispatch(setFavouriteList(newFavouriteList));
+      }
+
+      const newList = boards.filter((elem) => elem._id !== boardId);
+      if (newList.length === 0) {
+        navigate("/board");
+      } else {
+        navigate(`/board/${newList[0]._id}`);
+      }
+      dispatch(setBoards(newList));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <Box
@@ -133,7 +157,7 @@ export const Board = () => {
             <StarBorderOutlinedIcon />
           )}
         </IconButton>
-        <IconButton variant="outlined" color="error">
+        <IconButton variant="outlined" color="error" onClick={deleteBoard}>
           <DeleteIcon />
         </IconButton>
       </Box>
