@@ -30,7 +30,6 @@ export const Board = () => {
     const getBoard = async () => {
       try {
         const res = await boardApi.getOneBoard(boardId);
-        // console.log("🚀 ~ file: Board.js:33 ~ getBoard ~ res:", res);
         setTitle(res.title);
         setDescription(res.description);
         setSections(res.sections);
@@ -111,7 +110,18 @@ export const Board = () => {
 
   const addFavourite = async () => {
     try {
-      await boardApi.updateBoard(boardId, { favourite: !isFavourite });
+      const board = await boardApi.updateBoard(boardId, {
+        favourite: !isFavourite,
+      });
+      let newFavouriteList = [...favouriteList];
+      if (isFavourite) {
+        newFavouriteList = newFavouriteList.filter(
+          (elem) => elem._id !== boardId
+        );
+      } else {
+        newFavouriteList.unshift(board);
+      }
+      dispatch(setFavouriteList(newFavouriteList));
       setIsFavourite(!isFavourite);
     } catch (err) {
       console.log(err);
