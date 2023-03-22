@@ -39,6 +39,7 @@ export const Kanban = (props) => {
   };
 
   const onDragEnd = () => {};
+  const updateSectionTitle = () => {};
 
   return (
     <>
@@ -87,6 +88,7 @@ export const Kanban = (props) => {
                     >
                       <TextField
                         value={section.title}
+                        onChange={(e) => updateSectionTitle(e, section._id)}
                         placeholder="Untitled"
                         variant="outlined"
                         sx={{
