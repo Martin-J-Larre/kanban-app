@@ -6,11 +6,14 @@ import {
   IconButton,
   TextField,
   Typography,
+  Card,
 } from "@mui/material";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import sectionApi from "../services/sectionApi";
+
+let timer;
 
 export const Kanban = (props) => {
   const boardId = props.boardId;
@@ -38,8 +41,24 @@ export const Kanban = (props) => {
     }
   };
 
+  const updateSectionTitle = async (e, sectionId) => {
+    clearTimeout(timer);
+    const newTitle = e.target.value;
+    const newData = [...data];
+    const index = newData.findIndex((elem) => elem._id === sectionId);
+    newData[index].title = newTitle;
+    setData(newData);
+    timer = setTimeout(async () => {
+      try {
+        await sectionApi.update(boardId, sectionId, { title: newTitle });
+      } catch (err) {
+        console.log(err);
+      }
+    }, 500);
+  };
+
   const onDragEnd = () => {};
-  const updateSectionTitle = () => {};
+  const addTask = () => {};
 
   return (
     <>
@@ -107,6 +126,7 @@ export const Kanban = (props) => {
                         variant="outlined"
                         size="small"
                         sx={{ color: "gray", "&:hover": { color: "green" } }}
+                        onClick={() => addTask(section._id)}
                       >
                         <AddBoxOutlinedIcon />
                       </IconButton>
@@ -119,6 +139,32 @@ export const Kanban = (props) => {
                         <DeleteIcon />
                       </IconButton>
                     </Box>
+                    {section.tasks.map((task, index) => (
+                      <Draggable
+                        key={task._id}
+                        draggableId={task._id}
+                        index={index}
+                      >
+                        {(provided, snapshot) => (
+                          <Card
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            sx={{
+                              padding: "10px",
+                              marginBottom: "10px",
+                              cursor: snapshot.isDragging
+                                ? "grab"
+                                : "pointer!important",
+                            }}
+                          >
+                            <Typography>
+                              {task.title === "" ? "Untitled" : task.title}
+                            </Typography>
+                          </Card>
+                        )}
+                      </Draggable>
+                    ))}
                   </Box>
                 )}
               </Droppable>
