@@ -58,7 +58,7 @@ export const Kanban = (props) => {
   };
 
   const onDragEnd = () => {};
-  const addTask = () => {};
+  const addTask = async (sectionId) => {};
 
   return (
     <>
@@ -165,6 +165,7 @@ export const Kanban = (props) => {
                         )}
                       </Draggable>
                     ))}
+                    {provided.placeholder}
                   </Box>
                 )}
               </Droppable>
