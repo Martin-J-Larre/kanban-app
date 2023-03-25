@@ -12,6 +12,7 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import sectionApi from "../services/sectionApi";
+import taskApi from "../services/taskApi";
 
 let timer;
 
@@ -57,8 +58,43 @@ export const Kanban = (props) => {
     }, 500);
   };
 
-  const onDragEnd = () => {};
-  const addTask = async (sectionId) => {};
+  const onDragEnd = ({ source, destination }) => {
+    if (!destination) return;
+    const sourceColIndex = data.findIndex(
+      (elem) => elem._id === source.droppableId
+    );
+    const destinationColIndex = data.findIndex(
+      (elem) => elem._id === destination.droppableId
+    );
+    const sourceCol = data[sourceColIndex];
+    const destinationCol = data[destinationColIndex];
+
+    const sourceSectionId = sourceCol._id;
+    const destinationSectionId = destinationCol._id;
+
+    const sourceTasks = [...sourceCol.task];
+    const destinationTasks = [...destinationCol.task];
+
+    if (source.droppableId !== destination.droppableId) {
+      const [removed] = sourceTasks.splice(source.index, 1);
+      destinationTasks.splice(destination.index, 0, removed);
+      data[sourceColIndex].task = sourceTasks;
+      data[destinationColIndex].task = destinationTasks;
+    } else {
+    }
+  };
+
+  const addTask = async (sectionId) => {
+    try {
+      const task = await taskApi.create(boardId, { sectionId });
+      const newData = [...data];
+      const index = newData.findIndex((elem) => elem._id === sectionId);
+      newData[index].task.unshift(task);
+      setData(newData);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
@@ -139,7 +175,7 @@ export const Kanban = (props) => {
                         <DeleteIcon />
                       </IconButton>
                     </Box>
-                    {section.tasks.map((task, index) => (
+                    {section.task.map((task, index) => (
                       <Draggable
                         key={task._id}
                         draggableId={task._id}
