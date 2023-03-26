@@ -13,6 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import taskApi from "../services/taskApi";
 
 const styles = {
   outline: "none",
@@ -27,6 +28,9 @@ const styles = {
   boxShadow: 24,
   p: 1,
 };
+
+let timer;
+let isModalClosed = false;
 
 export const ModalTask = ({
   boardId,
@@ -46,9 +50,36 @@ export const ModalTask = ({
   }, [taskSelected]);
 
   const onClose = () => {
+    isModalClosed = true;
     onUpdate(task);
     onCloseModal();
   };
+
+  const updateTitle = async (e) => {
+    clearTimeout(timer);
+    const newTitle = e.target.value;
+    timer = setTimeout(async () => {
+      try {
+        await taskApi.update(boardId, task._id, { title: newTitle });
+      } catch (err) {
+        console.log(err);
+      }
+    }, 500);
+    task.title = newTitle;
+    setTitle(newTitle);
+    onUpdate(task);
+  };
+
+  const deleteTask = async () => {
+    try {
+      await taskApi.delete(boardId, task._id);
+      onDelete(task);
+      setTask(undefined);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <Modal
       open={task !== undefined}
@@ -67,7 +98,7 @@ export const ModalTask = ({
               width: "100%",
             }}
           >
-            <IconButton variant="outlined" color="error">
+            <IconButton variant="outlined" color="error" onClick={deleteTask}>
               <DeleteIcon />
             </IconButton>
           </Box>
@@ -81,7 +112,7 @@ export const ModalTask = ({
           >
             <TextField
               value={title}
-              // onChange={updateTitle}
+              onChange={updateTitle}
               placeholder="Untitled"
               variant="outlined"
               fullWidth

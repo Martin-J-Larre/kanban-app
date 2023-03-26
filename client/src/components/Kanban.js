@@ -114,9 +114,29 @@ export const Kanban = (props) => {
     }
   };
 
-  const onUpdateTask = () => {};
+  const onUpdateTask = (tsk) => {
+    const newData = [...data];
+    const sectionIndex = newData.findIndex(
+      (elem) => elem._id === tsk.section._id
+    );
+    const taskIndex = newData[sectionIndex].task.findIndex(
+      (elem) => elem._id === tsk._id
+    );
+    newData[sectionIndex].task[taskIndex] = tsk;
+    setData(newData);
+  };
 
-  const onDeleteTask = () => {};
+  const onDeleteTask = (tsk) => {
+    const newData = [...data];
+    const sectionIndex = newData.findIndex(
+      (elem) => elem._id === tsk.section._id
+    );
+    const taskIndex = newData[sectionIndex].task.findIndex(
+      (elem) => elem._id === tsk._id
+    );
+    newData[sectionIndex].task.splice(taskIndex, 1);
+    setData(newData);
+  };
   return (
     <>
       <Box
