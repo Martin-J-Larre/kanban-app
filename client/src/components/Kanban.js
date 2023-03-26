@@ -13,12 +13,14 @@ import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import sectionApi from "../services/sectionApi";
 import taskApi from "../services/taskApi";
+import { ModalTask } from "./ModalTask";
 
 let timer;
 
 export const Kanban = (props) => {
   const boardId = props.boardId;
   const [data, setData] = useState([]);
+  const [taskSelected, setTaskSelected] = useState(undefined);
 
   useEffect(() => {
     setData(props.data);
@@ -32,6 +34,7 @@ export const Kanban = (props) => {
       console.log(err);
     }
   };
+
   const deleteSection = async (sectionId) => {
     try {
       await sectionApi.delete(boardId, sectionId);
@@ -58,7 +61,7 @@ export const Kanban = (props) => {
     }, 500);
   };
 
-  const onDragEnd = ({ source, destination }) => {
+  const onDragEnd = async ({ source, destination }) => {
     if (!destination) return;
     const sourceColIndex = data.findIndex(
       (elem) => elem._id === source.droppableId
@@ -81,6 +84,21 @@ export const Kanban = (props) => {
       data[sourceColIndex].task = sourceTasks;
       data[destinationColIndex].task = destinationTasks;
     } else {
+      const [removed] = destinationTasks.splice(source.index, 1);
+      destinationTasks.splice(destination.index, 0, removed);
+      data[destinationColIndex].task = destinationTasks;
+    }
+
+    try {
+      await taskApi.updatePosition(boardId, {
+        resourceList: sourceTasks,
+        destinationList: destinationTasks,
+        resourceSectionId: sourceSectionId,
+        destinationSectionId: destinationSectionId,
+      });
+      setData(data);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -96,6 +114,9 @@ export const Kanban = (props) => {
     }
   };
 
+  const onUpdateTask = () => {};
+
+  const onDeleteTask = () => {};
   return (
     <>
       <Box
@@ -193,6 +214,7 @@ export const Kanban = (props) => {
                                 ? "grab"
                                 : "pointer!important",
                             }}
+                            onClick={() => setTaskSelected(task)}
                           >
                             <Typography>
                               {task.title === "" ? "Untitled" : task.title}
@@ -209,6 +231,13 @@ export const Kanban = (props) => {
           ))}
         </Box>
       </DragDropContext>
+      <ModalTask
+        taskSelected={taskSelected}
+        boardId={boardId}
+        onCloseModal={() => setTaskSelected(undefined)}
+        onUpdate={onUpdateTask}
+        onDelete={onDeleteTask}
+      />
     </>
   );
 };
