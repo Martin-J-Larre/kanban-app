@@ -10,7 +10,7 @@ const BoardSchema = new mongoose.Schema(
     },
     icon: {
       type: String,
-      default: "📜",
+      default: "😎",
     },
     title: {
       type: String,
@@ -18,7 +18,7 @@ const BoardSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      default: "Add description here ...",
+      default: "Add description here...",
     },
     position: Number,
     favourite: {

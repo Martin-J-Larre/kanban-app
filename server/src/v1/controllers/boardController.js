@@ -95,7 +95,7 @@ exports.updateBoard = async (req, res) => {
 
   try {
     if (title === "") req.body.title = "Untitled";
-    if (description === "") req.body.description = "Add description here ...";
+    if (description === "") req.body.description = "Add description here...";
     const currentBoard = await BoardModel.findById(boardId);
     if (!currentBoard) {
       res.status(404).json({

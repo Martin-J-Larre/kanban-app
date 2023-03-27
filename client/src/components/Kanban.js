@@ -137,6 +137,8 @@ export const Kanban = (props) => {
     newData[sectionIndex].task.splice(taskIndex, 1);
     setData(newData);
   };
+
+  console.log({ data });
   return (
     <>
       <Box
@@ -218,8 +220,8 @@ export const Kanban = (props) => {
                     </Box>
                     {section.task.map((task, index) => (
                       <Draggable
-                        key={task._id}
-                        draggableId={task._id}
+                        key={task.id}
+                        draggableId={task.id}
                         index={index}
                       >
                         {(provided, snapshot) => (

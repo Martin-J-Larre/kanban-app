@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Moment from "moment";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -42,12 +42,27 @@ export const ModalTask = ({
   const [task, setTask] = useState(taskSelected);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const editorWrapperRef = useRef();
 
   useEffect(() => {
     setTask(taskSelected);
     setTitle(taskSelected !== undefined ? taskSelected.title : "");
     setContent(taskSelected !== undefined ? taskSelected.content : "");
+    if (taskSelected !== undefined) {
+      isModalClosed = false;
+      updateEditorHeight();
+    }
   }, [taskSelected]);
+
+  const updateEditorHeight = () => {
+    setTimeout(() => {
+      if (editorWrapperRef.current) {
+        const box = editorWrapperRef.current;
+        box.querySelector(".ck-editor__editable_inline").style.height =
+          box.offsetHeight - 50 + "px";
+      }
+    }, 500);
+  };
 
   const onClose = () => {
     isModalClosed = true;
@@ -77,6 +92,25 @@ export const ModalTask = ({
       setTask(undefined);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const updateContent = async (e, editor) => {
+    clearTimeout(timer);
+    const data = editor.getData();
+
+    console.log({ isModalClosed });
+    if (!isModalClosed) {
+      timer = setTimeout(async () => {
+        try {
+          await taskApi.update(boardId, task._id, { content: data });
+        } catch (err) {
+          console.log(err);
+        }
+      }, 500);
+      task.content = data;
+      setContent(data);
+      onUpdate(task);
     }
   };
 
@@ -134,13 +168,20 @@ export const ModalTask = ({
             </Typography>
             <Divider sx={{ margin: "1.5rem 0" }} />
             <Box
+              ref={editorWrapperRef}
               sx={{
                 height: "80%",
                 overflowX: "hidden",
                 overflowY: "auto",
               }}
             >
-              <CKEditor editor={ClassicEditor} data={content} />
+              <CKEditor
+                editor={ClassicEditor}
+                data={content}
+                onChange={updateContent}
+                onFocus={updateEditorHeight}
+                onBlur={updateEditorHeight}
+              />
             </Box>
           </Box>
         </Box>

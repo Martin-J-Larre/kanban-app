@@ -200,7 +200,7 @@ export const Board = () => {
           <TextField
             value={description}
             onChange={updateDescription}
-            placeholder="Add a descrition"
+            placeholder="Add a descrition here..."
             variant="outlined"
             multiline
             fullWidth
