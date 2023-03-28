@@ -26,41 +26,6 @@ export const Kanban = (props) => {
     setData(props.data);
   }, [props.data]);
 
-  const addSection = async () => {
-    try {
-      const section = await sectionApi.create(boardId);
-      setData([...data, section]);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const deleteSection = async (sectionId) => {
-    try {
-      await sectionApi.delete(boardId, sectionId);
-      const newData = [...data].filter((elem) => elem._id !== sectionId);
-      setData(newData);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const updateSectionTitle = async (e, sectionId) => {
-    clearTimeout(timer);
-    const newTitle = e.target.value;
-    const newData = [...data];
-    const index = newData.findIndex((elem) => elem._id === sectionId);
-    newData[index].title = newTitle;
-    setData(newData);
-    timer = setTimeout(async () => {
-      try {
-        await sectionApi.update(boardId, sectionId, { title: newTitle });
-      } catch (err) {
-        console.log(err);
-      }
-    }, 500);
-  };
-
   const onDragEnd = async ({ source, destination }) => {
     if (!destination) return;
     const sourceColIndex = data.findIndex(
@@ -102,6 +67,41 @@ export const Kanban = (props) => {
     }
   };
 
+  const addSection = async () => {
+    try {
+      const section = await sectionApi.create(boardId);
+      setData([...data, section]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const deleteSection = async (sectionId) => {
+    try {
+      await sectionApi.delete(boardId, sectionId);
+      const newData = [...data].filter((elem) => elem._id !== sectionId);
+      setData(newData);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const updateSectionTitle = async (e, sectionId) => {
+    clearTimeout(timer);
+    const newTitle = e.target.value;
+    const newData = [...data];
+    const index = newData.findIndex((elem) => elem._id === sectionId);
+    newData[index].title = newTitle;
+    setData(newData);
+    timer = setTimeout(async () => {
+      try {
+        await sectionApi.update(boardId, sectionId, { title: newTitle });
+      } catch (err) {
+        console.log(err);
+      }
+    }, 500);
+  };
+
   const addTask = async (sectionId) => {
     try {
       const task = await taskApi.create(boardId, { sectionId });
@@ -138,7 +138,6 @@ export const Kanban = (props) => {
     setData(newData);
   };
 
-  console.log({ data });
   return (
     <>
       <Box
@@ -159,8 +158,8 @@ export const Kanban = (props) => {
           sx={{
             display: "flex",
             alignItems: "flex-start",
-            width: "calc(100vw - 400px )",
-            overflow: "auto",
+            width: "calc(100vw - 400px)",
+            overflowX: "auto",
           }}
         >
           {data.map((section) => (
@@ -177,7 +176,7 @@ export const Kanban = (props) => {
                     }}
                   >
                     <Box
-                      xs={{
+                      sx={{
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
@@ -193,7 +192,7 @@ export const Kanban = (props) => {
                           flexGrow: 1,
                           "& .MuiOutlinedInput-input": { padding: 0 },
                           "& .MuiOutlinedInput-notchedOutline": {
-                            border: "unset",
+                            border: "unset ",
                           },
                           "& .MuiOutlinedInput-root": {
                             fontSize: "1rem",
@@ -204,7 +203,10 @@ export const Kanban = (props) => {
                       <IconButton
                         variant="outlined"
                         size="small"
-                        sx={{ color: "gray", "&:hover": { color: "green" } }}
+                        sx={{
+                          color: "gray",
+                          "&:hover": { color: "green" },
+                        }}
                         onClick={() => addTask(section._id)}
                       >
                         <AddBoxOutlinedIcon />
@@ -212,16 +214,20 @@ export const Kanban = (props) => {
                       <IconButton
                         variant="outlined"
                         size="small"
-                        sx={{ color: "gray", "&:hover": { color: "red" } }}
+                        sx={{
+                          color: "gray",
+                          "&:hover": { color: "red" },
+                        }}
                         onClick={() => deleteSection(section._id)}
                       >
                         <DeleteIcon />
                       </IconButton>
                     </Box>
-                    {section.task.map((task, index) => (
+
+                    {section.task.map((tsk, index) => (
                       <Draggable
-                        key={task.id}
-                        draggableId={task.id}
+                        key={tsk._id}
+                        draggableId={tsk._id}
                         index={index}
                       >
                         {(provided, snapshot) => (
@@ -236,10 +242,10 @@ export const Kanban = (props) => {
                                 ? "grab"
                                 : "pointer!important",
                             }}
-                            onClick={() => setTaskSelected(task)}
+                            onClick={() => setTaskSelected(tsk)}
                           >
                             <Typography>
-                              {task.title === "" ? "Untitled" : task.title}
+                              {tsk.title === "" ? "Untitled" : tsk.title}
                             </Typography>
                           </Card>
                         )}
